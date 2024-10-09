@@ -1,4 +1,4 @@
-# GEOS26100-Fall2022
+# GEOS 26100: Phylogenetics and the Fossil Record
 This repository hosts materials I developed as a teaching assistant for the course "Phylogenetics and the Fossil Record" (GEOS 26100), taught by Graham Slater at the University of Chicago in Fall 2022.
 
 For my reflections on the experience and some commentary on the files described above, see:
