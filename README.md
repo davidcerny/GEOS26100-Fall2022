@@ -1,7 +1,7 @@
 # GEOS 26100: Phylogenetics and the Fossil Record
 This repository hosts materials I developed as a teaching assistant for the course "Phylogenetics and the Fossil Record" (GEOS 26100), taught by Graham Slater at the University of Chicago in Fall 2022.
 
-For my reflections on the experience and some commentary on the files described above, see:
+For my reflections on the experience and some commentary on the files described below, see:
 
 https://davidcerny.github.io/post/teaching_revbayes
 
@@ -25,11 +25,16 @@ This repository includes the following files:
 
 ## Errata
 
-- In the handout for Lab 5, I say that maximum-likelihood phylogenetic inference was originally developed for DNA sequences. This is not correct; it was actually first developed for continuous characters representing blood group allele frequencies (Edwards & Cavalli-Sforza 1964).
+- In the handout for Lab 5, I say that maximum-likelihood phylogenetic inference was originally developed for DNA sequences. This is not correct; it was actually first developed for continuous characters representing blood-group allele frequencies (Edwards & Cavalli-Sforza 1964).
  
 ## Acknowledgments
 
 ## References
+
+- Edwards AWF, Cavalli-Sforza LL. 1964. Reconstruction of evolutionary trees. Pp. 67–76 *in* Heywood VH, McNeill J, eds. *Phenetic and Phylogenetic Classification*. London, UK: Systematics Association Publ. No. 6
+- Höhna S, Landis MJ, Heath TA, Boussau B, Lartillot N, Moore BR, Huelsenbeck JP, Ronquist F. 2016. RevBayes: Bayesian phylogenetic inference using graphical models and an interactive model-specification language. *Syst. Biol.* 65(4): 726–736
+- Minh BQ, Schmidt HA, Chernomor O, Schrempf D, Woodhams MD, von Haeseler A, Lanfear R. 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era. *Mol. Biol. Evol.* 37(5): 1530–1534. Corrigendum: 37(8): 2461
+- Tedford RH, Wang X-M, Taylor BE. 2009. Phylogenetic systematics of the North American fossil Caninae (Carnivora: Canidae). *Bull. Am. Mus. Nat. Hist.* 325: 1–218
 
 This work is licensed under a
 [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
