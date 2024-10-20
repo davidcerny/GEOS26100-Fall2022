@@ -1,0 +1,140 @@
+dataFolder = "/Users/David/Downloads/GEOS26100-test/"
+morpho = readDiscreteCharacterData(dataFolder+"Tedford_2009-1.nex")
+
+num_taxa <- morpho.size()
+
+# NOTE THE DIFFERENCE: we now have a rooted tree with 2N - 2 branches,
+# instead of an unrooted one with 2N - 3 branches
+
+num_branches := 2 * num_taxa - 2
+
+moves = VectorMoves()
+monitors = VectorMonitors()
+
+#########################################
+# The Fossilized Birth-Death tree model #
+#########################################
+
+taxa <- readTaxonData(dataFolder+"Tedford_ages.tsv")
+
+diversification ~ dnExponential(10)
+ext_frac ~ dnUniform(0, 1)
+fossil_prob ~ dnUniform(0, 1)
+
+# Specify a scale move on the diversification parameter
+moves.append( mvScale(diversification, lambda=0.01, weight=5) )
+moves.append( mvScale(diversification, lambda=0.1,  weight=3) )
+moves.append( mvScale(diversification, lambda=1,    weight=1) )
+
+# Specify a sliding-window move on the ext_frac parameter
+moves.append( mvSlide(ext_frac, delta=0.01, weight=5) )
+moves.append( mvSlide(ext_frac, delta=0.1,  weight=3) )
+moves.append( mvSlide(ext_frac, delta=1,    weight=1) )
+
+# Specify a sliding-window move on the fossil_prob parameter
+moves.append( mvSlide(fossil_prob, delta=0.01, weight=5) )
+moves.append( mvSlide(fossil_prob, delta=0.1,  weight=3) )
+moves.append( mvSlide(fossil_prob, delta=1,    weight=1) )
+
+speciation := diversification / abs(1.0 - ext_frac)
+extinction := (ext_frac * diversification) / abs(1.0 - ext_frac)
+recovery := (fossil_prob / abs(1.0 - fossil_prob)) * extinction
+
+rho <- 7/34
+
+mean_prior_age <- (49 - 38)/qexp(0.95)
+# The lambda parameter of an exponential function is the inverse of the mean:
+origin_time ~ dnExponential(lambda=1/mean_prior_age, offset=38)
+
+# Specify a sliding-window move on the origin time parameter
+moves.append( mvSlide(origin_time, delta=1, weight=10) )
+
+tree ~ dnFBDP(origin=origin_time, lambda=speciation, mu=extinction, psi=recovery, rho=rho, taxa=taxa)
+
+# Specify moves on topology; allow some taxa to be ancestors of others
+moves.append( mvFNPR(tree, weight=15) )
+moves.append( mvCollapseExpandFossilBranch(tree, origin_time, weight=6) )
+
+# Specify moves on the node ages, including the root age
+moves.append( mvNodeTimeSlideUniform(tree, weight=40) )
+moves.append( mvRootTimeSlideUniform(tree, origin_time, weight=5) )
+
+num_samp_anc := tree.numSampledAncestors()
+
+######################
+# Strict clock model #
+######################
+
+sigma <- 1.17481
+clock_mean <- 0.005
+mu := ln(clock_mean) - (0.5 * sigma^2)
+clock_rate ~ dnLognormal(mean=mu, sd=sigma)
+
+# Specify a scale move on the clock rate parameter
+moves.append( mvScale(clock_rate, lambda=1, weight=10) )
+
+####################################
+# Rate variation across characters #
+####################################
+
+# Let's use a broad uniform distribution from 0 to 1,000,000:
+alpha ~ dnUniform(0, 1E6)
+moves.append( mvScale(alpha, weight=2.0) )
+
+# The three arguments are: (1) shape, (2) rate, (3) number of categories
+char_rates := fnDiscretizeGamma(alpha, alpha, 4)
+
+###########################################################
+# Mk substitution models, partitioned by number of states #
+###########################################################
+
+max_num_states <- 6
+
+# Define a helper variable to count distinct rate matrices:
+j = 1
+
+# We will start from 2, because there are no constant (1-state) characters
+# in the Tedford et al. matrix
+for (i in 2:max_num_states) {
+    partitions[i - 1] <- morpho
+    
+    # Only keep those characters whose number of states equals i
+    partitions[i - 1].setNumStatesPartition(i)
+    
+    # How many i-state characters do we have?
+    nc = partitions[i - 1].nchar()
+    if (nc > 0) {
+        Q[j] := fnJC(i)
+
+        characters[j] ~ dnPhyloCTMC(tree=tree, Q=Q[j], type="Standard",
+                                    branchRates=clock_rate, siteRates=char_rates,
+                                    coding="variable")
+        characters[j].clamp(partitions[i - 1])
+        
+        # Increment counter
+        j = j + 1
+
+        # Close the if-conditional and the for-loop
+    }
+}
+
+###########################
+# Putting it all together #
+###########################
+
+mymodel = model(tree)
+
+monitors.append( mnScreen(printgen=10) )
+monitors.append( mnModel(filename=dataFolder+"Tedford_FBD_strictclock.log", printgen=10) )
+monitors.append( mnFile(filename=dataFolder+"Tedford_FBD_strictclock.trees", printgen=10, tree) )
+
+mymcmc = mcmc(mymodel, monitors, moves, nruns=2)
+
+########################
+# Running the analysis #
+########################
+
+mymcmc.burnin(generations=10000, tuningInterval=10)
+mymcmc.run(generations=100000)
+
+q()

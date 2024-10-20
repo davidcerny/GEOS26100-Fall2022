@@ -1,0 +1,68 @@
+lambda <- 1.0
+n <- 10
+mu_true <- 1.0
+arrow_mean <- rgamma(1, n, n/mu_true)[1]
+
+# Initialize the chain with some starting value
+
+mu <- rexp(1, lambda)[1]
+
+
+# Define the likelihood function on the mean 
+function likelihood(mu) {
+    if (mu < 0.0) {
+        return 0.0
+    } else {
+        return dgamma(arrow_mean, n, n/mu, log=false)
+    }
+}
+
+# Define the prior function on the mean 
+function prior(mu) {
+    if (mu < 0.0) {
+        return 0.0
+    } else {
+        return dexp(mu, lambda, log=false)
+    }
+}
+
+
+# Prepare a file to log our samples
+write("iteration", "mu", "\n", file="archery.log")
+write(0, mu, "\n", file="archery.log", append=TRUE)
+
+# Print the initial values to the screen 
+print("iteration", "mu")
+print(0, mu)
+
+# Write the MH algorithm
+n_iter = 20000
+printgen = 20
+delta = 1
+
+for(iter in 1:n_iter) {
+    # Step 2: propose a new value of mu
+    mu_prime <- mu + runif(n=1, -delta, delta)[1]
+
+    # Step 3: compute the acceptance probability
+    R <- likelihood(mu_prime)/likelihood(mu) * prior(mu_prime)/prior(mu)
+    
+    # Step 4: accept or reject the proposal
+    u <- runif(1,0,1)[1] 
+    if (u < R) {
+        # Accept the proposal
+        mu <- mu_prime 
+    }
+
+    # Step 5: record the current value
+    if ( (iter % printgen) == 0 ) {
+        # Write the sampled value to a file
+        write(iter, mu, "\n", file="archery.log", append=TRUE)
+        # Print the sampled value to the screen
+        print(iter, mu)
+    }
+} # end MCMC
+
+
+
+q()

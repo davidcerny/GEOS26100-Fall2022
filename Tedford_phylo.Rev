@@ -1,0 +1,105 @@
+morpho = readDiscreteCharacterData("/Users/David/Downloads/Tedford_2009-1.nex")
+
+num_taxa <- morpho.size()
+num_branches := 2 * num_taxa - 3
+taxa <- morpho.names()
+
+moves = VectorMoves()
+monitors = VectorMonitors()
+
+###############################
+# Topology and branch lengths #
+###############################
+
+out_group <- clade("Hesperocyoninae")
+
+topology ~ dnUniformTopology(taxa, outgroup=out_group)
+moves.append( mvNNI(topology, weight=num_branches) )
+moves.append( mvSPR(topology, weight=num_branches/10.0) )
+
+for (i in 1:num_branches) {
+  branch_lengths[i] ~ dnUniform(0, 5)
+  moves.append( mvScale(branch_lengths[i]) )
+}
+
+tree_length := sum(branch_lengths)
+tree := treeAssembly(topology, branch_lengths)
+
+####################################
+# Rate variation across characters #
+####################################
+
+# Let's use a broad uniform distribution from 0 to 1,000,000:
+alpha ~ dnUniform(0, 1E6)
+moves.append( mvScale(alpha, weight=2.0) )
+
+# The three arguments are: (1) shape, (2) rate, (3) number of categories
+char_rates := fnDiscretizeGamma(alpha, alpha, 4)
+
+###########################################################
+# Mk substitution models, partitioned by number of states #
+###########################################################
+
+max_num_states <- 6
+
+# Define a helper variable to count distinct rate matrices:
+j = 1
+
+# We will start from 2, because there are no constant (1-state) characters
+# in the Tedford et al. matrix
+for (i in 2:max_num_states) {
+    partitions[i - 1] <- morpho
+    
+    # Only keep those characters whose number of states equals i
+    partitions[i - 1].setNumStatesPartition(i)
+    
+    # How many i-state characters do we have?
+    nc = partitions[i - 1].nchar()
+    if (nc > 0) {
+        Q[j] := fnJC(i)
+
+        characters[j] ~ dnPhyloCTMC(tree=tree, Q=Q[j], type="Standard",
+                                    siteRates=char_rates,
+                                    coding="variable")
+        characters[j].clamp(partitions[i - 1])
+        
+        # Increment counter
+        j = j + 1
+
+        # Close the if-conditional and the for-loop
+    }
+}
+
+###########################
+# Putting it all together #
+###########################
+
+mymodel = model(tree)
+
+monitors.append( mnScreen(printgen=10) )
+monitors.append( mnModel(filename="Tedford_phylo.log", printgen=10) )
+monitors.append( mnFile(filename="Tedford_phylo.trees", printgen=10, tree) )
+
+mymcmc = mcmc(mymodel, monitors, moves, nruns=2)
+
+########################
+# Running the analysis #
+########################
+
+mymcmc.burnin(generations=2000, tuningInterval=10)
+mymcmc.run(generations=20000)
+
+#########################
+# Processing the output #
+#########################
+
+trace1 = readTreeTrace("Tedford_phylo_run_1.trees", treetype="non-clock",
+                       burnin = 0)
+trace2 = readTreeTrace("Tedford_phylo_run_2.trees", treetype="non-clock",
+                       burnin = 0)
+trace_combined = [trace1, trace2]
+
+mcc_tree = mccTree(trace=trace_combined, file="my_MCC_tree.tre")
+map_tree = mapTree(trace=trace_combined, file="my_MAP_tree.tre")
+
+q()
