@@ -51,7 +51,7 @@ This repository includes the following files:
 
 **What about Labs 1–4? What were they about and why are they not here?**
 
-The first four labs of the course were dedicated to finding a pre-existing character matrix in the literature (Lab 1); constructing one's own toy matrix for different types of pasta (Lab 2); parsimony analysis in PAUP\* (Lab 3); and time-scaling parsimony trees using R, RStudio, and `paleotree` (Lab 4). Unlike the handouts for Labs 6--8, which I wrote pretty much from scratch, the handouts for the first four labs were heavily based on earlier materials prepared by [Anna Wisniewski](https://github.com/wisniewskianna) and [Graham Slater](https://github.com/grahamjslater), so it didn't feel appropriate to upload them to my personal GitHub.
+The first four labs of the course were dedicated to finding a pre-existing character matrix in the literature (Lab 1); constructing one's own toy matrix for different types of pasta (Lab 2); parsimony analysis in PAUP\* (Lab 3); and time-scaling parsimony trees using R, RStudio, and `paleotree` (Lab 4). Unlike the handouts for Labs 6–8, which I wrote pretty much from scratch, the handouts for the first four labs were heavily based on earlier materials prepared by [Anna Wisniewski](https://github.com/wisniewskianna) and [Graham Slater](https://github.com/grahamjslater), so it didn't feel appropriate to upload them to my personal GitHub.
  
 ## Acknowledgments
 
