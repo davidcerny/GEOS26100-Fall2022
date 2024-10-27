@@ -1,4 +1,5 @@
 # GEOS 26100: Phylogenetics and the Fossil Record
+
 This repository hosts materials I developed as a teaching assistant for the course "Phylogenetics and the Fossil Record" (GEOS 26100), taught by Graham Slater at the University of Chicago in Fall 2022.
 
 For my reflections on the experience and some commentary on the files described below, see:
@@ -29,11 +30,32 @@ This repository includes the following files:
 ## Errata
 
 - In the handout for Lab 5, I say that maximum-likelihood phylogenetic inference was originally developed for DNA sequences. This is not correct; it was actually first developed for continuous characters representing blood-group allele frequencies (Edwards & Cavalli-Sforza 1964).
+- Changing `Tedford_phylo.Rev` as suggested in Exercise 6 of Lab 7 will trigger issue [#308](https://github.com/revbayes/revbayes/issues/308) and result in the following error:
+
+  ```
+    Error:    Ambiguous call to function 'sum' with arguments ( Probability[] )
+    Potentially matching functions are:
+    sum (Real[]<any> x)
+    sum (RealPos[]<any> x)
+    sum (Integer[]<any> x)
+    sum (Natural[]<any> x)
+   
+    Error:    Problem processing line 26 in file ""Tedford_phylo.Rev""
+  ```
+    
+  Unfortunately, this issue is still unresolved, so I'd recommend modifying the exercise by asking the students to try out a different prior -- e.g, `dnExponential(5)`.
+
 - The script for Lab 8 (`Tedford_FBD_strictclock.Rev`) *will* run with the current version of RevBayes, but the program will flood the screen with warnings about attempts to set fossil ages to illegal values. As it turns out, this occurs when the root of the tree is a sampled ancestor, and the `mvRootTimeSlideUniform` move attempts to change its age (see RevBayes issue [#544](https://github.com/revbayes/revbayes/issues/544) and pull request [#559](https://github.com/revbayes/revbayes/pull/559)). We can get rid of the warnings simply by commenting this move out.
+
+## FAQ
+
+**What about Labs 1–4? What were they about and why aren't they here?**
+
+The first four labs of the course were dedicated to finding a pre-existing character matrix in the literature (Lab 1); constructing one's own toy matrix for different types of pasta (Lab 2); parsimony analysis in PAUP\* (Lab 3); and time-scaling parsimony trees using R, RStudio, and `paleotree` (Lab 4). Unlike the handouts for Labs 6--8, which I wrote pretty much from scratch, the handouts for the first four labs were heavily based on earlier materials prepared by [Anna Wisniewski](https://github.com/wisniewskianna) and [Graham Slater](https://github.com/grahamjslater), so it didn't feel appropriate to upload them to my personal GitHub.
  
 ## Acknowledgments
 
-As described in the associated blog post, Labs 6–8 were developed following the advice of a number of RevBayes developers, some of whom kindly shared with me their own tutorials and workshop slides. When publicly available, these are linked to from the corresponding handouts and credited to their authors, with all such citations highlighted in blue. They include:
+As described in the accompanying [blog post](https://davidcerny.github.io/post/teaching_revbayes), Labs 6–8 were developed following the advice of a number of RevBayes developers, some of whom kindly shared with me their own tutorials and workshop slides. When publicly available, these are linked to from the corresponding handouts and credited to their authors, with all such citations highlighted in blue. They include:
 
 - [Jeremy Brown](https://github.com/jembrown)'s slides from the Workshop on Molecular Evolution ([link](https://molevolworkshop.github.io/faculty/brown/pdf/Brown_GraphicalModels_RevBayes.pdf)) (Lab 6)
 - [Tracy Heath](https://github.com/trayc7)'s tutorial from the Taming the BEAST workshop ([link](https://taming-the-beast.org/tutorials/FBD-tutorial/FBD-tutorial.pdf)) (Lab 8)
