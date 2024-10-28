@@ -60,6 +60,8 @@ This repository includes the following files:
 
 - Also in the script for Lab 8, when the students try to plug their own numbers into the calculation of the origin age prior, it's preferable for type safety reasons to write `abs(upper - lower)/qexp(0.95)` instead of just `(upper - lower)/qexp(0.95)`.
 
+- Occasionally, students might see negative branch lengths when they try to summarize their time trees from Lab 8 using `mapTree()` or `mccTree()`. These can be avoided by specifying `positiveBranchLengths=TRUE`.
+
 ## FAQ
 
 **What about Labs 1–4? What were they about and why are they not here?**
