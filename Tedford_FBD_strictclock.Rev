@@ -1,5 +1,4 @@
-dataFolder = "/Users/David/Downloads/GEOS26100-test/"
-morpho = readDiscreteCharacterData(dataFolder+"Tedford_2009-1.nex")
+morpho = readDiscreteCharacterData("/Users/David/Downloads/Tedford_2009-1.nex")
 
 num_taxa <- morpho.size()
 
@@ -15,7 +14,7 @@ monitors = VectorMonitors()
 # The Fossilized Birth-Death tree model #
 #########################################
 
-taxa <- readTaxonData(dataFolder+"Tedford_ages.tsv")
+taxa <- readTaxonData("/Users/David/Downloads/Tedford_ages.tsv")
 
 diversification ~ dnExponential(10)
 ext_frac ~ dnUniform(0, 1)
@@ -125,8 +124,8 @@ for (i in 2:max_num_states) {
 mymodel = model(tree)
 
 monitors.append( mnScreen(printgen=10) )
-monitors.append( mnModel(filename=dataFolder+"Tedford_FBD_strictclock.log", printgen=10) )
-monitors.append( mnFile(filename=dataFolder+"Tedford_FBD_strictclock.trees", printgen=10, tree) )
+monitors.append( mnModel(filename="Tedford_FBD_strictclock.log", printgen=10) )
+monitors.append( mnFile(filename="Tedford_FBD_strictclock.trees", printgen=10, tree) )
 
 mymcmc = mcmc(mymodel, monitors, moves, nruns=2)
 
