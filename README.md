@@ -27,9 +27,19 @@ This repository includes the following files:
     * `Tedford_phylo.Rev` goes with Lab 7;
     * `Tedford_FBD_strictclock.Rev` goes with Lab 8.
 
-## Errata
+## Errata and troubleshooting
 
 - In the handout for Lab 5, I say that maximum-likelihood phylogenetic inference was originally developed for DNA sequences. This is not correct; it was actually first developed for continuous characters representing blood-group allele frequencies (Edwards & Cavalli-Sforza 1964).
+- Also in the handout for Lab 5, my well-intentioned advice to use the standard/slow (`-b`) rather than ultrafast (`-B`) bootstrap sometimes caused students to run into the following error with IQ-TREE v2.2.0:
+
+  ```
+  ERROR: phylokernelnew.h:3332: double PhyloTree::computeLikelihoodFromBufferGenericSIMD() [VectorClass = Vec4d, FMA = true, SITE_MODEL = false]: Assertion `std::isfinite(tree_lh) && "Numerical underflow for lh-from-buffer"' failed. 
+  ERROR: 
+  ERROR: *** IQ-TREE CRASHES WITH SIGNAL ABORTED 
+  ```
+  
+  I haven't verified if this error occurs still occurs in the most recent version of the program (v2.3.6 as of 2024-10-27), but I would still recommend using the more numerically stable ultrafast bootstrap just in case.
+  
 - Changing `Tedford_phylo.Rev` as suggested in Exercise 6 of Lab 7 will trigger issue [#308](https://github.com/revbayes/revbayes/issues/308) and result in the following error:
 
   ```
@@ -43,9 +53,9 @@ This repository includes the following files:
     Error:    Problem processing line 26 in file ""Tedford_phylo.Rev""
   ```
     
-  Unfortunately, this issue is still unresolved, so I'd recommend modifying the exercise by asking the students to try out a different prior – e.g, `dnExponential(5)`.
+  Unfortunately, this issue is still unsolved, so I'd recommend modifying the exercise by asking the students to try out a different prior – e.g, `dnExponential(5)`.
 
-- The script for Lab 8 (`Tedford_FBD_strictclock.Rev`) *will* run with the current version of RevBayes, but the program will flood the screen with warnings about attempts to set fossil ages to illegal values. As it turns out, this occurs when the root of the tree is a sampled ancestor, and the `mvRootTimeSlideUniform` move attempts to change its age (see RevBayes issue [#544](https://github.com/revbayes/revbayes/issues/544) and pull request [#559](https://github.com/revbayes/revbayes/pull/559)). We can get rid of the warnings simply by commenting this move out.
+- The script for Lab 8 (`Tedford_FBD_strictclock.Rev`) *will* run with the current version of RevBayes, but the program will flood the screen with warnings about attempts to set fossil ages to illegal values. As it turns out, this occurs when the root of the tree is a sampled ancestor, and the `mvRootTimeSlideUniform` move attempts to change its age (see RevBayes issue [#544](https://github.com/revbayes/revbayes/issues/544) and pull request [#559](https://github.com/revbayes/revbayes/pull/559)). We can get rid of the warnings simply by removing this move.
 
 ## FAQ
 
