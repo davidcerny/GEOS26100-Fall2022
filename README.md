@@ -39,7 +39,7 @@ This repository includes the following files:
   ERROR: *** IQ-TREE CRASHES WITH SIGNAL ABORTED 
   ```
   
-  I haven't verified if this error occurs still occurs in the most recent version of the program (v2.3.6 as of 2024-10-27), but I would still recommend using the more numerically stable ultrafast bootstrap just in case.
+  I haven't verified if this error occurs still occurs in the most recent version (v2.3.6 as of 2024-10-27), but I would still recommend using the more numerically stable ultrafast bootstrap just in case.
   
 - Changing `Tedford_phylo.Rev` as suggested in Exercise 6 of Lab 7 will trigger RevBayes issue [#308](https://github.com/revbayes/revbayes/issues/308) and result in the following error:
 
