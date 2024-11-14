@@ -56,8 +56,6 @@ This repository includes the following files:
     
   Unfortunately, this issue is still unsolved, so I'd recommend modifying the exercise by asking the students to try out a different prior – e.g, `dnExponential(5)`.
 
-- The script for Lab 8 (`Tedford_FBD_strictclock.Rev`) *will* run with the current version of RevBayes, but the program will flood the screen with warnings about attempts to set fossil ages to illegal values. As it turns out, this occurs when the root of the tree is a sampled ancestor, and the `mvRootTimeSlideUniform` move attempts to change its age (see RevBayes issue [#544](https://github.com/revbayes/revbayes/issues/544) and pull request [#559](https://github.com/revbayes/revbayes/pull/559)). We can get rid of the warnings simply by deleting this move.
-
 - Also in the script for Lab 8, when the students try to plug their own numbers into the calculation of the origin age prior, it's preferable for type safety reasons to write `abs(upper - lower)/qexp(0.95)` instead of just `(upper - lower)/qexp(0.95)`.
 
 - Occasionally, students might see negative branch lengths when they try to summarize their time trees from Lab 8 using `mapTree()` or `mccTree()`. These can be avoided by specifying `positiveBranchLengths=TRUE`.
